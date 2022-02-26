@@ -2,15 +2,33 @@ package main
 
 import (
 	"fmt"
+	"github.com/alexflint/go-arg"
 	"github.com/gdamore/tcell/v2"
 	"log"
-	"strings"
+	"os"
 	"time"
-	"unicode"
+	"tjweldon/gmatrix/src"
 )
 
+var debugOut string
+
+var Charset []rune
+
+var args struct {
+	DumpCharset string `arg:"--dump-src"`
+}
+
 func main() {
-	lower, upper := unicode.Braille.R16[0].Lo, unicode.Braille.R16[0].Hi
+	arg.MustParse(&args)
+
+	// Dump the src and exit
+	if args.DumpCharset != "" {
+		src.DumpCharset(args.DumpCharset)
+		os.Exit(0)
+	}
+
+	Charset = src.GetCharset()
+	debugOut += string(Charset)
 
 	s, err := tcell.NewScreen()
 	if err != nil {
@@ -27,11 +45,7 @@ func main() {
 	s.Show()
 	w, h := s.Size()
 	maxLen := w * h
-	var content string
-	for i := lower; i <= upper; i++ {
-		content += strings.Trim(string(rune(i)), " ")
-	}
-	for j, cell := range []rune(content) {
+	for j, cell := range Charset {
 		if j > maxLen {
 			break
 		}
@@ -40,9 +54,11 @@ func main() {
 
 		s.SetContent(x, y, cell, nil, style.Foreground(tcell.NewHexColor(0x22aa33)))
 	}
+
 	s.Show()
-	time.Sleep(time.Duration(3) * time.Second)
+	time.Sleep(time.Duration(0) * time.Second)
 	s.Fini()
 
-	fmt.Println(content)
+	fmt.Printf("%s", debugOut)
+	fmt.Print("\n")
 }
