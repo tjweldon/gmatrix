@@ -1,16 +1,29 @@
-package src
+package drawing
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
 	"unicode"
 )
 
-// GetCharset is the primary interface to this file. It returns the
+var charset []rune
+
+// GetCharset returns the static set of the characters will appear. It returns the
 // set of runes used for drawing the screen.
 func GetCharset() []rune {
-	excluded := configureExclusions()
-	return charsetFrom(Tables, excluded)
+	if len(charset) == 0 {
+		calcCharset(true)
+	}
+
+	return charset
+}
+
+func calcCharset(refresh bool) {
+	if refresh || len(charset) == 0 {
+		excluded := configureExclusions()
+		charset = charsetFrom(Tables, excluded)
+	}
 }
 
 // DumpCharset is intended to be used for debugging and will dump the charset
@@ -20,6 +33,16 @@ func DumpCharset(path string) {
 	if err != nil {
 		fmt.Printf("%+v\n", err)
 	}
+}
+
+func SelectRandomN(n int) []rune {
+	calcCharset(false)
+	var result []rune
+	for i := 0; i < n; i++ {
+		result[i] = charset[rand.Intn(len(charset))]
+	}
+
+	return result
 }
 
 var greekSlice = unicode.RangeTable{
