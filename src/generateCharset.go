@@ -36,13 +36,16 @@ func DumpCharset(path string) {
 }
 
 func SelectRandomN(n int) []rune {
-	calcCharset(false)
-	var result []rune
+	result := make([]rune, n)
 	for i := 0; i < n; i++ {
-		result[i] = charset[rand.Intn(len(charset))]
+		result[i] = charset[rand.Intn(len(charset)-1)]
 	}
 
 	return result
+}
+
+func SelectRand() rune {
+	return charset[rand.Intn(len(charset)-1)]
 }
 
 var greekSlice = unicode.RangeTable{
@@ -142,7 +145,6 @@ func isExcluded16(i uint16, excluded []unicode.Range16) bool {
 			return true
 		}
 	}
-
 	return false
 }
 

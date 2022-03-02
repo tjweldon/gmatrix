@@ -7,9 +7,7 @@ import (
 	"tjweldon/gmatrix/src"
 )
 
-var debugOut string
-
-var Charset []rune
+var someOtherDebugOut string
 
 var args struct {
 	DumpCharset string `arg:"--dump-charset"`
@@ -24,10 +22,10 @@ func main() {
 		os.Exit(0)
 	}
 
-	debugOut += string(drawing.GetCharset())
+	someOtherDebugOut += string(drawing.GetCharset())
 
 	drawing.Draw()
 
-	fmt.Printf("%s", debugOut)
+	fmt.Printf("%s", someOtherDebugOut)
 	fmt.Print("\n")
 }
